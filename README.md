@@ -3,7 +3,7 @@ Let's Learn the Psychopy
 
 ## 1. Setting 
 
-경로: ./PreConn/
+경로: ./PsychopyTutorial/
 
 * Anaconda or Miniconda를 이용해 psychopy환겅을 만들어 줍니다. 
 ```
