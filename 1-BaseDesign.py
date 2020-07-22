@@ -1,20 +1,6 @@
-﻿#!/usr/bin/env python
-# -*- coding: utf-8 -*-
- 
-from __future__ import absolute_import, division
-from psychopy import locale_setup
-from psychopy import prefs
-from psychopy import sound, gui, visual, core, data, event, logging, clock
-from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
-                                STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
+﻿from __future__ import absolute_import, division
 import numpy as np
-from numpy import (sin, cos, tan, log, log10, pi, average,
-                   sqrt, std, deg2rad, rad2deg, linspace, asarray)
-from numpy.random import random, randint, normal, shuffle
 import os, sys
-from psychopy.hardware import keyboard
-import csv
-import random
 from definition import *
 
 
@@ -98,7 +84,7 @@ WaitComponents = [WaitText, WaitSignal]
 initComponents(WaitComponents)
 
 # 3. Start Routine
-while continueRoutine:
+while True:
     # get current time
     timer, tThisFlip, tThisFlipGlobal, frameN = getCurrentTime(WaitClock, win, frameN)
 
@@ -108,16 +94,17 @@ while continueRoutine:
     if len(WaitSigList):
         continueRoutine = False
     
-    # check continue or not 
+    # Finish if not continueRoutine
     if defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
     if not continueRoutine: 
         break
-    continueRoutine = False  
+    
+    # Check continue or not
     for Compo in WaitComponents:
         if hasattr(Compo, "status") and Compo.status != FINISHED:
             continueRoutine = True
-            break  
+        else: continueRoutine = False    
     if continueRoutine:  
         win.flip()
 
@@ -177,7 +164,8 @@ while continueRoutine and routineTimer.getTime() > 0:
     for Compo in TrialComponents:
         if hasattr(Compo, "status") and Compo.status != FINISHED:
             continueRoutine = True
-            break  
+            
+            #break  
     if continueRoutine:  
         win.flip()
 
