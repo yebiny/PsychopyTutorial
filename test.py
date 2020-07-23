@@ -44,6 +44,18 @@ globalClock = core.Clock()
 routineTimer = core.CountdownTimer() 
 frameTolerance = 0.001  
 
+def updateparam(Compo, dur, setTime):
+    if routineTimer.getTime() > setTime-dur:
+        if Compo.status==False: 
+            Compo.tStart  = TrialClock.getTime()
+        win.timeOnFlip(Compo, 'tStartRefresh')  
+        Compo.setAutoDraw(True)
+        Compo.status=True
+    else:
+        win.timeOnFlip(Compo, 'tStopRefresh')  # time at next scr refresh
+        Compo.setAutoDraw(False)
+        Compo.status=False
+
 # Update Definition
 def param_updates(Param, ParamDur, keyList=None):
     if keyList != None: 
@@ -90,98 +102,63 @@ initComponents(WaitComponents)
 
 # 3. Start Routine
 while True:
-    # get current time
-    timer, tThisFlip, tThisFlipGlobal, frameN = getCurrentTime(WaitClock, win, frameN)
+    time, tThisFlip, tThisFlipGlobal, frameN=getCurrentTime(RoutineClock, win, frameN) 
     
     # update parameters
-    param_updates(WaitText, 2) 
-    WaitSigList=param_updates(WaitSignal, 2, ['s'])
-    print( timer, tThisFlip, tThisFlipGlobal, frameN)
-    print(WaitSigList)
-    if len(WaitSigList):
-        continueRoutine = False
+    update(WaitText, 3, tThisFlip, tThisFlipGlobal, win) 
+    update(WaitSignal, 10000, tThisFlip, tThisFlipGlobal, win) 
+    if len(theseKeys):
+        print(theseKeys)
+        break
     
     # Finish if not continueRoutine
     if defaultKeyboard.getKeys(keyList=["escape"]):
         core.quit()
-    if not continueRoutine: 
-        break
     
-    # Check continue or not
-    #for Compo in WaitComponents:
-    #    if hasattr(Compo, "status") and Compo.status != FINISHED:
-    #        continueRoutine = True
-    #    else: continueRoutine = False    
-    if continueRoutine:  
-        win.flip()
+    win.flip()
 
 # 4. Ending Routine
-for Compo in WaitComponents:
-    if hasattr(Compo, "setAutoDraw"):
-        Compo.setAutoDraw(False)
-routineTimer.reset()
-
+endRoutine(WaitComponents)
 
 ###############################################
 #------------------- TRIAL -------------------#
 ###############################################
+
+
+
 # 1. Set Trial timer
 frameN = 0
 TrialClock.reset(-win.getFutureFlipTime(clock="now"))
-
-for i in range(1, 10):
+for i in range(1, 15):
     # 2. Set Components
-    TrialComponents = [Dot, Stim, Signal, Response]
+    TrialComponents = [Stim]#, Stim, Signal, Response]
     initComponents(TrialComponents)
-    continueRoutine = True
     
     # 3. Set Trial Routine timer
     TrialSetTime=3
+    routineTimer.reset()
     routineTimer.add(TrialSetTime)
     
     # 4. Set image
-    
     img = './stim/%i.jpg'%(i)
     Stim.setImage(img)
     
     # 5. Run Routine Trial
-    while continueRoutine and routineTimer.getTime() > 0:
-        # get current time
-        timer, tThisFlip, tThisFlipGlobal, frameN = getCurrentTime(TrialClock, win, frameN)
-        
-        # update parameters
-        param_updates(Stim, 1) 
-        param_updates(Dot, TrialSetTime)     
-       
-        RespList=param_updates(Response, TrialSetTime, ['r'])     
-        if len(RespList):
-            Response.keys=RespList[-1].name
-            Response.rt=RespList[-1].rt
-    
-        SigList=param_updates(Signal, TrialSetTime, ['s'])     
-        if len(SigList):
-            Signal.keys=SigList[-1].name
-            Signal.rt=SigList[-1].rt
-            continueRoutine = False
-          
-        # check continue or not 
+    while routineTimer.getTime() > frameTolerance:
+        time, tThisFlip, tThisFlipGlobal, frameN=getCurrentTime(RoutineClock, win, frameN) 
+
+        updateparam(Stim, 3, 1)
+        updateparam(Dot, 3, 2)
+
+        # set quit key 
         if defaultKeyboard.getKeys(keyList=["escape"]):
             core.quit()
-        if not continueRoutine:  
-            break
-        continueRoutine = False  
-        for Compo in TrialComponents:
-            if hasattr(Compo, "status") and Compo.status != FINISHED:
-                continueRoutine = True
-                
-                #break  
-        if continueRoutine:  
-            win.flip()
+        win.flip()
+    
+    print(i, routineTimer.getTime(), Stim.tStart)
     
     # 6. Ending Routine "Trial"
-    for Compo in TrialComponents:
-        if hasattr(Compo, "setAutoDraw"):
-            Compo.setAutoDraw(False)
+    endRoutine(TrialComponents)
     
     
 win.flip()

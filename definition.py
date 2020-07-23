@@ -68,3 +68,29 @@ def initComponents(RoutineComponents):
         if hasattr(Compo, 'status'):
             Compo.status = NOT_STARTED
 
+def endRoutine(Components):
+    for Compo in Components:
+        if hasattr(Compo, "setAutoDraw"):
+            Compo.setAutoDraw(False)
+
+
+def update(Dot, duration, tThisFlip, tThisFlipGlobal, win):
+    # *Dot* updates
+    if Dot.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+        # keep track of start time/frame for later
+        Dot.frameNStart = frameN  # exact frame index
+        Dot.tStart = t  # local t and not account for scr refresh
+        Dot.tStartRefresh = tThisFlipGlobal  # on global time
+        
+        win.timeOnFlip(Dot, 'tStartRefresh')  # time at next scr refresh
+        Dot.setAutoDraw(True)
+    if Dot.status == STARTED:
+        # is it time to stop? (based on global clock, using actual start)
+        if tThisFlipGlobal > Dot.tStartRefresh + (duration)-frameTolerance:
+            Dot.tStop = t  # not accounting for scr refresh
+            Dot.frameNStop = frameN  # exact frame index
+            win.timeOnFlip(Dot, 'tStopRefresh')  # time at next scr refresh
+            Dot.setAutoDraw(False)
+
+
+
