@@ -6,11 +6,10 @@ from definition import *
 # Response  ->  dot color change 
 # Signal time :  0-2 -> 1-2
 
-
 # Store info about the experiment session
 Date=data.getDateStr()
 
-expName = 'YYB'
+expName = 'PsychopyTutorial_1st'
 expInfo = {
            'Title': expName, 
            'Date' : Date,
@@ -27,161 +26,102 @@ win = set_window()
 defaultKeyboard = keyboard.Keyboard()
 
 # Initialize "Wait" Components
-WaitClock = core.Clock()
 WaitText = set_text(win, 'WaitText')
-WaitText.text = 'Hello'
 WaitSignal = keyboard.Keyboard()
+WaitComponents=[WaitText, WaitSignal]
 
 # Initialize "Trial" Components
-TrialClock = core.Clock()
 Dot = set_circle(win, 'Dot')
 Stim = set_image(win, 'Stim')
 Signal = keyboard.Keyboard()
 Response = keyboard.Keyboard()
+TrialComponents=[Dot, Stim, Signal, Response]
 
 # Create some handy timers
-globalClock = core.Clock()  
+WaitClock = core.Clock()
+TrialClock = core.Clock()
 routineTimer = core.CountdownTimer() 
 frameTolerance = 0.001  
-
-# Update Definition
-def param_updates(Param, ParamDur, keyList=None):
-    if keyList != None: 
-        waitOnFlip=False
-    if Param.status == NOT_STARTED and tThisFlip >= 0-frameTolerance:
-        Param.frameNStart = frameN  # exact frame index
-        Param.tStart = timer  # local t and not account for scr refresh
-        Param.tStartRefresh = tThisFlipGlobal  # on global time
-        win.timeOnFlip(Param, 'tStartRefresh')  # time at next scr refresh
-        if keyList!=None:
-            Param.status=STARTED
-            win.OnFlip = True
-            win.callOnFlip(Param.clock.reset)  # t=0 on next screen flip
-            win.callOnFlip(Param.clearEvents, eventType='keyboard')  
-        else:
-            Param.setAutoDraw(True)
-    if Param.status == STARTED:
-        if tThisFlipGlobal > Param.tStartRefresh + ParamDur-frameTolerance:
-            Param.tStop = timer  # not accounting for scr refresh
-            Param.frameNStop = frameN  # exact frame index
-            win.timeOnFlip(Param, 'tStopRefresh')  # time at next scr refresh
-            if keyList!=None:
-                Param.status=FINISHED
-            else:
-                Param.setAutoDraw(False)
-    theseKeys=[]
-    if keyList!=None and Param.status == STARTED and not waitOnFlip:
-        theseKeys = Param.getKeys(keyList=keyList, waitRelease=False)
-        
-    return theseKeys
 
 
 ##############################################
 #------------------- WAIT -------------------#
 ##############################################
 # 1. Set "Wait" Timer
-frameN = 0
 WaitClock.reset(-win.getFutureFlipTime(clock="now"))
 
-# 2. Set Components
-continueRoutine = True
-WaitComponents = [WaitText, WaitSignal]
+# 2. Initialize "Wait" Components
 initComponents(WaitComponents)
 
-# 3. Start Routine
+# 3. Start "Wait" Routine
 while True:
-    # get current time
-    timer, tThisFlip, tThisFlipGlobal, frameN = getCurrentTime(WaitClock, win, frameN)
+    # set this routine 
+    WaitRoutine = Routine(win, WaitClock)
     
-    # update parameters
-    param_updates(WaitText, 2) 
-    WaitSigList=param_updates(WaitSignal, 2, ['s'])
-    print( timer, tThisFlip, tThisFlipGlobal, frameN)
-    print(WaitSigList)
-    if len(WaitSigList):
-        continueRoutine = False
-    
-    # Finish if not continueRoutine
-    if defaultKeyboard.getKeys(keyList=["escape"]):
-        core.quit()
-    if not continueRoutine: 
+    # components update
+    WaitRoutine.visual(WaitText, 1000)    
+    signal = WaitRoutine.response(WaitSignal, 1000, ['s'])    
+    if len(signal):
         break
     
-    # Check continue or not
-    #for Compo in WaitComponents:
-    #    if hasattr(Compo, "status") and Compo.status != FINISHED:
-    #        continueRoutine = True
-    #    else: continueRoutine = False    
-    if continueRoutine:  
-        win.flip()
+    if defaultKeyboard.getKeys(keyList=["escape"]):
+        core.quit()
+    
+    win.flip()
 
-# 4. Ending Routine
-for Compo in WaitComponents:
-    if hasattr(Compo, "setAutoDraw"):
-        Compo.setAutoDraw(False)
-routineTimer.reset()
+# 4. Ending "Wait" Routine
+endRoutine(WaitComponents)
+
 
 
 ###############################################
 #------------------- TRIAL -------------------#
 ###############################################
+
 # 1. Set Trial timer
-frameN = 0
 TrialClock.reset(-win.getFutureFlipTime(clock="now"))
 
-for i in range(1, 10):
-    # 2. Set Components
-    TrialComponents = [Dot, Stim, Signal, Response]
+for i in range(1, 15):
+    
+    # 2. Initialize Components
     initComponents(TrialComponents)
-    continueRoutine = True
     
     # 3. Set Trial Routine timer
-    TrialSetTime=3
-    routineTimer.add(TrialSetTime)
+    setTime=2
+    routineTimer.reset()
+    routineTimer.add(setTime)
     
     # 4. Set image
-    
     img = './stim/%i.jpg'%(i)
     Stim.setImage(img)
-    
-    # 5. Run Routine Trial
-    while continueRoutine and routineTimer.getTime() > 0:
-        # get current time
-        timer, tThisFlip, tThisFlipGlobal, frameN = getCurrentTime(TrialClock, win, frameN)
+    Dot.color=[-1,-1,-1]
+
+    # 5. Start "Trial" Routine
+    while routineTimer.getTime() > frameTolerance:
+        # set this flip
+        TrialRoutine = Routine(win, TrialClock)
         
-        # update parameters
-        param_updates(Stim, 1) 
-        param_updates(Dot, TrialSetTime)     
-       
-        RespList=param_updates(Response, TrialSetTime, ['r'])     
-        if len(RespList):
-            Response.keys=RespList[-1].name
-            Response.rt=RespList[-1].rt
-    
-        SigList=param_updates(Signal, TrialSetTime, ['s'])     
-        if len(SigList):
-            Signal.keys=SigList[-1].name
-            Signal.rt=SigList[-1].rt
-            continueRoutine = False
-          
-        # check continue or not 
+        # components update
+        TrialRoutine.visual(Stim, 1)    
+        TrialRoutine.visual(Dot, setTime)    
+        signal = TrialRoutine.response(Signal, setTime, 's')    
+        if len(signal) and routineTimer.getTime()<1:
+            Signal.rt = signal[-1].rt
+            break
+        response = TrialRoutine.response(Response, setTime, 'r')    
+        if len(response):
+            Response.rt = response[-1].rt
+            Dot.color=[1,1,1]
+
+        # set quit key 
         if defaultKeyboard.getKeys(keyList=["escape"]):
             core.quit()
-        if not continueRoutine:  
-            break
-        continueRoutine = False  
-        for Compo in TrialComponents:
-            if hasattr(Compo, "status") and Compo.status != FINISHED:
-                continueRoutine = True
-                
-                #break  
-        if continueRoutine:  
-            win.flip()
+        win.flip()
+    
+    print(i, Stim.tStart, Signal.rt, Response.rt)
     
     # 6. Ending Routine "Trial"
-    for Compo in TrialComponents:
-        if hasattr(Compo, "setAutoDraw"):
-            Compo.setAutoDraw(False)
+    endRoutine(TrialComponents)
     
     
 win.flip()

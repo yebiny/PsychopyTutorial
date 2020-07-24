@@ -53,16 +53,9 @@ def set_image(win, name):
     return image
 
 
-def getCurrentTime(RoutineClock, win, frameN):
-    timer = RoutineClock.getTime()
-    tThisFlip = win.getFutureFlipTime(clock=RoutineClock)
-    tThisFlipGlobal = win.getFutureFlipTime(clock=None)
-    frameN = frameN + 1  
-    return timer, tThisFlip, tThisFlipGlobal, frameN
 
-def initComponents(RoutineComponents):
-    for Compo in RoutineComponents:
-        Compo.keys, Compo.rt = [], []
+def initComponents(Components):
+    for Compo in Components:
         Compo.tStart, Compo.tStop = None, None
         Compo.tStartRefresh, Compo.tStopRefresh = None, None
         if hasattr(Compo, 'status'):
@@ -74,23 +67,50 @@ def endRoutine(Components):
             Compo.setAutoDraw(False)
 
 
-def update(Dot, duration, tThisFlip, tThisFlipGlobal, win):
-    # *Dot* updates
-    if Dot.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-        # keep track of start time/frame for later
-        Dot.frameNStart = frameN  # exact frame index
-        Dot.tStart = t  # local t and not account for scr refresh
-        Dot.tStartRefresh = tThisFlipGlobal  # on global time
+class Routine():
+    def __init__(self, window, RoutineClock):
+       
+        self.win = window
+        self.frameTl = 0.0001
+        self.time = RoutineClock.getTime()
+        self.tFlip = window.getFutureFlipTime(clock=RoutineClock)
+        self.tGlobal = window.getFutureFlipTime(clock=None)
+        #self.frame = RoutineFrame + 1  
+    
+    def visual(self, Compo, Dur):
+        # *Compo* updates
+        if Compo.status == NOT_STARTED and self.tFlip >= 0.0-self.frameTl:
+            # keep track of start time/frame for later
+            Compo.tStart = self.time  # local t and not account for scr refresh
+            Compo.tStartRefresh = self.tGlobal
+            self.win.timeOnFlip(Compo, 'tStartRefresh')  # time at next scr refresh
+            Compo.setAutoDraw(True)
+        if Compo.status == STARTED:
+            if self.tGlobal > Compo.tStartRefresh + (Dur)-self.frameTl:
+                Compo.tStop = self.time  # not accounting for scr refresh
+                self.win.timeOnFlip(Compo, 'tStopRefresh')  # time at next scr refresh
+                Compo.setAutoDraw(False)
+    
+    def response(self, Compo, Dur, keyList):
+
+        waitOnFlip=False
+        if Compo.status == NOT_STARTED and self.tFlip >= 0-self.frameTl:
+            Compo.tStart = self.time  # local t and not account for scr refresh
+            Compo.tStartRefresh = self.tGlobal  # on global time
+            Compo.status=STARTED
+            
+            self.win.timeOnFlip(Compo, 'tStartRefresh')  # time at next scr refresh
+            self.win.OnFlip = True
+            self.win.callOnFlip(Compo.clock.reset)  
+            self.win.callOnFlip(Compo.clearEvents, eventType='keyboard')  
         
-        win.timeOnFlip(Dot, 'tStartRefresh')  # time at next scr refresh
-        Dot.setAutoDraw(True)
-    if Dot.status == STARTED:
-        # is it time to stop? (based on global clock, using actual start)
-        if tThisFlipGlobal > Dot.tStartRefresh + (duration)-frameTolerance:
-            Dot.tStop = t  # not accounting for scr refresh
-            Dot.frameNStop = frameN  # exact frame index
-            win.timeOnFlip(Dot, 'tStopRefresh')  # time at next scr refresh
-            Dot.setAutoDraw(False)
-
-
-
+        if Compo.status == STARTED:
+            if self.tGlobal > Compo.tStartRefresh + (Dur)-self.frameTl:
+                Compo.tStop = self.time  # not accounting for scr refresh
+                Compo.status=FINISHED
+                self.win.timeOnFlip(Compo, 'tStopRefresh')  # time at next scr refresh
+        theseKeys=[]
+        if Compo.status == STARTED and not waitOnFlip:
+            theseKeys = Compo.getKeys(keyList=keyList, waitRelease=False)
+            
+        return theseKeys
