@@ -105,13 +105,12 @@ for i in range(1, 15):
         TrialRoutine.visual(Stim, 1)    
         TrialRoutine.visual(Dot, setTime)    
         signal = TrialRoutine.response(Signal, setTime, 's')    
-        if len(signal) and routineTimer.getTime()<1:
+        if len(signal):
             Signal.rt = signal[-1].rt
             break
         response = TrialRoutine.response(Response, setTime, 'r')    
         if len(response):
             Response.rt = response[-1].rt
-            Dot.color=[1,1,1]
 
         # set quit key 
         if defaultKeyboard.getKeys(keyList=["escape"]):
