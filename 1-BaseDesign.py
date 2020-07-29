@@ -3,8 +3,6 @@ import numpy as np
 import os, sys
 from definition import *
 
-# Response  ->  dot color change 
-# Signal time :  0-2 -> 1-2
 
 # Store info about the experiment session
 Date=data.getDateStr()
@@ -19,7 +17,6 @@ expInfo = {
 dlg = gui.DlgFromDict(dictionary=expInfo, sortKeys=False, title=expName)
 if dlg.OK == False:
     core.quit()  
-print(dlg)
 
 # Setup the Window and Keyboard
 win = set_window()
@@ -94,13 +91,11 @@ for i in range(1, 15):
     # 4. Set image
     img = './stim/%i.jpg'%(i)
     Stim.setImage(img)
-    Dot.color=[-1,-1,-1]
 
     # 5. Start "Trial" Routine
     while routineTimer.getTime() > frameTolerance:
         # set this flip
         TrialRoutine = Routine(win, TrialClock)
-        
         # components update
         TrialRoutine.visual(Stim, 1)    
         TrialRoutine.visual(Dot, setTime)    
@@ -111,7 +106,6 @@ for i in range(1, 15):
         response = TrialRoutine.response(Response, setTime, 'r')    
         if len(response):
             Response.rt = response[-1].rt
-
         # set quit key 
         if defaultKeyboard.getKeys(keyList=["escape"]):
             core.quit()

@@ -4,9 +4,6 @@ import os, sys
 from definition import *
 import csv
 
-# Response  ->  dot color change 
-# Signal time :  0-2 -> 1-2
-
 # Store info about the experiment session
 Date=data.getDateStr()
 
@@ -24,9 +21,11 @@ print(dlg)
 
 # Save Outputs in this Session
 fname = 'output/sub%s_%s_output.csv'%(expInfo['SubId'], expInfo['Session'])
-#if os.path.isfile(fname):
-#    print(fname, ' is Already Exist.')
-#    core.quit()
+
+if os.path.isfile(fname):
+    print(fname, ' is Already Exist.')
+    core.quit()
+
 fout = open(fname, 'w', newline='')
 wout=csv.writer(fout)
 wout.writerow(info for info in expInfo)
@@ -84,8 +83,6 @@ while True:
 # 4. Ending "Wait" Routine
 endRoutine(WaitComponents)
 
-
-
 ###############################################
 #------------------- TRIAL -------------------#
 ###############################################
@@ -117,7 +114,7 @@ for i in range(1, 15):
         TrialRoutine.visual(Stim, 1)    
         TrialRoutine.visual(Dot, setTime)    
         signal = TrialRoutine.response(Signal, setTime, 's')    
-        if len(signal) and routineTimer.getTime()<1:
+        if len(signal) and (0<routineTimer.getTime()<1):
             Signal.rt = signal[-1].rt
             break
         response = TrialRoutine.response(Response, setTime, 'r')    
