@@ -1,7 +1,7 @@
 ﻿from __future__ import absolute_import, division
 import numpy as np
 from definition import *
-import csv
+from makeMatrix import *
 
 # Store info about the experiment session
 Date=data.getDateStr()
@@ -18,18 +18,26 @@ if dlg.OK == False:
     core.quit()  
 print(dlg)
 
+
 # Save Outputs in this Session
 fname = 'output/sub%s_%s_output.csv'%(expInfo['SubId'], expInfo['Session'])
-
-if os.path.isfile(fname):
-    print(fname, ' is Already Exist.')
-    core.quit()
+check_file(fname)
 
 fout = open(fname, 'w', newline='')
 wout=csv.writer(fout)
 wout.writerow(info for info in expInfo)
 wout.writerow(expInfo[info] for info in expInfo)
 wout.writerow(['nTrial', 'TrialTime', 'SignalTime', 'ResponseTime','ResponseKey'])
+
+# Make Matrix
+fmat = make_matrix(expInfo['SubId'], expInfo['Session'])
+# Load Matrix
+fmat = open(fmat, 'r')
+rmat=csv.reader(fmat)
+infomat= [line for line in rmat]
+setTimeList=infomat[0]
+imgIdxList=infomat[1]
+fmat.close()
 
 # Setup the Window and Keyboard
 win = set_window()
@@ -89,18 +97,18 @@ endRoutine(WaitComponents)
 # 1. Set Trial timer
 TrialClock.reset(-win.getFutureFlipTime(clock="now"))
 
-for i in range(1, 15):
+for i in range(len(setTimeList)):
     
     # 2. Initialize Components
     initComponents(TrialComponents)
     
     # 3. Set Trial Routine timer
-    setTime=2.1
     routineTimer.reset()
+    setTime=float(setTimeList[i])
     routineTimer.add(setTime)
     
     # 4. Set image
-    img = './stim/%i.jpg'%(i)
+    img = './stim/%i.jpg'%(int(imgIdxList[i]))
     Stim.setImage(img)
     Dot.color=[-1,-1,-1]
 

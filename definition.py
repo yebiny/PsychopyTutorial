@@ -9,6 +9,7 @@ from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
                                 STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
 from psychopy.hardware import keyboard
 
+
 # Setup the Window and Keyboard
 def set_window():
     window = visual.Window(
