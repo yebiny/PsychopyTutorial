@@ -1,6 +1,7 @@
 ﻿from __future__ import absolute_import, division
 import numpy as np
 from definition import *
+from makeMatrix import *
 import csv
 
 # Store info about the experiment session
@@ -20,10 +21,7 @@ print(dlg)
 
 # Save Outputs in this Session
 fname = 'output/sub%s_%s_output.csv'%(expInfo['SubId'], expInfo['Session'])
-
-if os.path.isfile(fname):
-    print(fname, ' is Already Exist.')
-    core.quit()
+check_file(fname)
 
 fout = open(fname, 'w', newline='')
 wout=csv.writer(fout)
