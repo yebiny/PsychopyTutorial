@@ -1,5 +1,6 @@
 ﻿from __future__ import absolute_import, division
 import numpy as np
+
 from definition import *
 from makeMatrix import *
 
@@ -11,17 +12,17 @@ expInfo = {
            'Title': expName, 
            'Date' : Date,
            'SubId': '00',
-           'Session': '00'
+           'Session': '00',
            }
 dlg = gui.DlgFromDict(dictionary=expInfo, sortKeys=False, title=expName)
 if dlg.OK == False:
     core.quit()  
 print(dlg)
 
-
 # Save Outputs in this Session
 fname = 'output/sub%s_%s_output.csv'%(expInfo['SubId'], expInfo['Session'])
-check_file(fname)
+
+# Chck fname ::
 
 fout = open(fname, 'w', newline='')
 wout=csv.writer(fout)
@@ -30,14 +31,7 @@ wout.writerow(expInfo[info] for info in expInfo)
 wout.writerow(['nTrial', 'TrialTime', 'SignalTime', 'ResponseTime','ResponseKey'])
 
 # Make Matrix
-fmat = make_matrix(expInfo['SubId'], expInfo['Session'])
-# Load Matrix
-fmat = open(fmat, 'r')
-rmat=csv.reader(fmat)
-infomat= [line for line in rmat]
-setTimeList=infomat[0]
-imgIdxList=infomat[1]
-fmat.close()
+fmat, setTimeList, imgIdxList = make_matrix(expInfo['SubId'], expInfo['Session'])
 
 # Setup the Window and Keyboard
 win = set_window()
